@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>투두리스트</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<section class="todoapp">
+		<header class="header">
+			<h1>todos</h1>
+			<input class="new-todo" placeholder="할 일을 입력해주세요!" autofocus="">
+		</header>
+		<section style="display: block;" class="main">
+			<input id="toggle-all" class="toggle-all" type="checkbox">
+			<label for="toggle-all"></label>
+			<ul class="todo-list">
+				<li data-id="1628755423246">
+					<div class="view">
+						<input class="toggle" type="checkbox">
+						<label>기본</label>
+						<button class="destroy"></button>
+					</div>
+				</li>
+				<li data-id="1628755424927" class="completed">
+					<div class="view">
+						<input class="toggle" type="checkbox" checked>
+						<label>체크</label>
+						<button class="destroy"></button>
+					</div>
+				</li>
+				<li data-id="1628755433970" class="editing">
+					<div class="view">
+						<input class="toggle" type="checkbox">
+						<label>수정</label>
+						<button class="destroy"></button>
+					</div>
+					<input class="edit" value="수정" />
+				</li>
+	
+			</ul>
+			<footer class="footer">
+				<span class="todo-count">2 개</span>
+				<ul class="filters">
+					<li>
+						<a href="#/" class="selected">모두</a>
+					</li>
+					<li>
+						<a href="#/active">진행중</a>
+					</li>
+					<li>
+						<a href="#/completed">완료</a>
+					</li>
+				</ul>
+				<button class="clear-completed" style="display: block;">완료 지우기</button>
+			</footer>
+		</section>
+	</section>
+</body>
+</html>
