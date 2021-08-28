@@ -9,7 +9,7 @@ import { ALL, ACTIVE, COMPLETED } from "./constants/state.js";
 class App {
   constructor() {
     this.state = {
-      todos: [],
+      todos: this.fetchTodos(),
       filter: ALL
     };
 
@@ -27,6 +27,7 @@ class App {
 
   setState(nextState) {
     this.state = { ...this.state, ...nextState };
+    this.saveTodos(this.state.todos);
     this.todoList.setState({
       ...this.state,
       todos: this.filteredTodos(this.state.todos)
@@ -84,6 +85,14 @@ class App {
             return completed
         }
       });
+  }
+
+  fetchTodos() {
+    return JSON.parse(localStorage.getItem('todos')) ?? [];
+  }
+
+  saveTodos(todos) {
+    localStorage.setItem('todos', JSON.stringify(todos));
   }
 }
 
