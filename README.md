@@ -3,7 +3,7 @@
 <br/>
 
 ## 🔥 결과물
-<p align="middle"></p>
+<p align="middle">
     <img width="400" src="todoapp.gif">
 </p>
 
