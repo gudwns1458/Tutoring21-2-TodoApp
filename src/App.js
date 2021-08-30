@@ -6,7 +6,7 @@ import LoadingSpinner from "./components/LoadingSpinner.js";
 
 import { $ } from "./utils/selector.js";
 import { todoAPI } from "./apis/todo.js";
-import { ALL, ACTIVE, COMPLETED } from "./constants/state.js";
+import { ALL, ACTIVE, COMPLETED, PRIORITY } from "./constants/state.js";
 
 class App {
   constructor() {
@@ -28,19 +28,18 @@ class App {
       this.state,
       this.toggleTodo,
       this.editTodo,
-      this.removeTodo
+      this.removeTodo,
+      this.changePriority
     );
     this.todoCount = new TodoCount($('.footer'), this.state, this.changeFilter);
   }
 
   async setState(nextState) {
-    this.loadingOn();
     this.state = { 
       ...this.state, 
       ...nextState,
       todos: await this.fetchTodos()
     };
-    this.loadingOff();
     this.todoList.setState({
       ...this.state,
       todos: this.filteredTodos(this.state.todos)
@@ -96,7 +95,14 @@ class App {
   }
 
   filteredTodos() {
-    return this.state.todos
+    const priority = {
+      'NONE': 0,
+      'FIRST': 2,
+      'SECOND': 1
+    };
+
+    return this.state.filter !== PRIORITY ? 
+    this.state.todos
       .filter(({ completed }) => {
         switch (this.state.filter) {
           case ALL:
@@ -106,15 +112,27 @@ class App {
           case COMPLETED:
             return completed
         }
-      });
+      }) :
+    this.state.todos.sort((a, b) => priority[b.priority] - priority[a.priority]);
   }
 
-  fetchTodos() {
-    return todoAPI.fetchTodos();
+  async fetchTodos() {
+    this.loadingOn();
+    const todos = todoAPI.fetchTodos();
+    this.loadingOff();
+    return todos;
   }
 
   saveTodos(todos) {
     localStorage.setItem('todos', JSON.stringify(todos));
+  }
+
+  changePriority = async (id, priority) => {
+    const todo = this.state.todos.find(todo => todo.id === id);
+    this.loadingOn();
+    await todoAPI.modifyTodo(id, { ...todo, priority });
+    this.loadingOff();
+    this.setState()
   }
 
   loadingOn() {

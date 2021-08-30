@@ -1,5 +1,6 @@
 const ALL = 'ALL';
 const ACTIVE = 'ACTIVE';
+const PRIORITY = 'PRIORITY';
 const COMPLETED = 'COMPLETED';
 
-export { ALL, ACTIVE, COMPLETED }
+export { ALL, ACTIVE, COMPLETED, PRIORITY }

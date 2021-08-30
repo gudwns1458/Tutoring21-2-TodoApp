@@ -1,7 +1,7 @@
-import { ALL } from "../constants/state.js";
+import { NONE, FIRST, SECOND } from "../constants/priority.js";
 
 export default class TodoList {
-  constructor($target, initialState, toggleTodo, editTodo, removeTodo) {
+  constructor($target, initialState, toggleTodo, editTodo, removeTodo, changePriority) {
     this.$target = $target;
     this.state = initialState;
 
@@ -25,6 +25,12 @@ export default class TodoList {
       }
     });
 
+    this.$target.addEventListener('change', ({ target }) => {
+      const { id } = target.closest('[data-id]').dataset;
+      const { value } = target.options[target.selectedIndex];
+      changePriority(id, value);
+    });
+
     this.render();
   }
 
@@ -34,14 +40,20 @@ export default class TodoList {
   }
 
   render() {
-    console.log(this.state)
     this.$target.innerHTML = this.state.todos
       .map(todo => 
         `
           <li data-id="${todo.id}" ${todo.completed ? 'class="completed"' : ''}>
             <div class="view">
               <input class="toggle" type="checkbox" ${todo.completed ? 'checked' : ''}>
-              <label>${todo.title}</label>
+              <label>
+                <select class="chip ${todo.priority === FIRST ? 'primary' : todo.priority === SECOND ? 'secondary' : ''}">
+                  <option value="NONE" ${todo.priority === NONE ? 'selected' : ''}>순위</option>
+                  <option value="FIRST" ${todo.priority === FIRST ? 'selected' : ''}>1순위</option>
+                  <option value="SECOND" ${todo.priority === SECOND ? 'selected' : ''}>2순위</option>
+                </select>
+                ${todo.title}
+              </label>
               <button class="destroy"></button>
             </div>
             <input class="edit" value="${todo.title}" />

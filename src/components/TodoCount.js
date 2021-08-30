@@ -1,4 +1,4 @@
-import { ACTIVE, ALL, COMPLETED } from "../constants/state.js";
+import { ACTIVE, ALL, COMPLETED, PRIORITY } from "../constants/state.js";
 
 export default class TodoCount {
   constructor($target, initialState, changeFilter) {
@@ -26,6 +26,9 @@ export default class TodoCount {
       <ul class="filters">
         <li data-filter="ALL">
           <a href="#/" ${this.state.filter === ALL ? 'class="selected"' : ''}>모두</a>
+        </li>
+        <li data-filter="PRIORITY">
+          <a href="#/priority" ${this.state.filter === PRIORITY ? 'class="selected"' : ''}>우선순위</a>
         </li>
         <li data-filter="ACTIVE">
           <a href="#/active" ${this.state.filter === ACTIVE ? 'class="selected"' : ''}>진행중</a>

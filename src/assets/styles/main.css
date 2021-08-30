@@ -556,3 +556,29 @@ button {
         transform: rotate(360deg);
     }
 }
+
+.chip {
+  width: 40px;
+  display: block;
+  font-size: 10px;
+  color: #fff;
+  font-weight: normal;
+  border-radius: 15px;
+  text-align: center;
+  left: 60px;
+  top: 3px;
+}
+
+.chip.primary {
+  background-color: #d63a49;
+}
+
+.chip.secondary {
+  background-color: #26c6da;
+}
+
+select.chip {
+  border-color: #e0e0e0;
+  color: #bdbdbd;
+  width: 45px;
+}
