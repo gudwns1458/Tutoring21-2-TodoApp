@@ -1,3 +1,5 @@
+import { ALL } from "../constants/state.js";
+
 export default class TodoList {
   constructor($target, initialState, toggleTodo, editTodo, removeTodo) {
     this.$target = $target;
@@ -32,6 +34,7 @@ export default class TodoList {
   }
 
   render() {
+    console.log(this.state)
     this.$target.innerHTML = this.state.todos
       .map(todo => 
         `

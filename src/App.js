@@ -2,32 +2,45 @@ import TodoInput from "./components/TodoInput.js";
 import TodoAllToggle from "./components/TodoAllToggle.js";
 import TodoList from "./components/TodoList.js";
 import TodoCount from "./components/TodoCount.js";
+import LoadingSpinner from "./components/LoadingSpinner.js";
 
 import { $ } from "./utils/selector.js";
+import { todoAPI } from "./apis/todo.js";
 import { ALL, ACTIVE, COMPLETED } from "./constants/state.js";
 
 class App {
   constructor() {
-    this.state = {
-      todos: this.fetchTodos(),
-      filter: ALL
-    };
+    this.create();  
+  }
 
+  async create() {
+    this.loadingSpinner = new LoadingSpinner($('#overlay'), { isloading: false });
+    this.loadingOn();
+    this.state = {
+      filter: ALL,
+      todos: await todoAPI.fetchTodos()
+    }
+    this.loadingOff();
     this.todoInput = new TodoInput($('.new-todo'), this.addTodo);
     this.todoAllToggle = new TodoAllToggle($('.toggle-all'), this.toggleAllTodos);
     this.todoList = new TodoList(
       $('.todo-list'), 
-      this.state, 
+      this.state,
       this.toggleTodo,
       this.editTodo,
       this.removeTodo
     );
-    this.todoCount = new TodoCount($('.footer'), this.state, this.changeFilter); 
+    this.todoCount = new TodoCount($('.footer'), this.state, this.changeFilter);
   }
 
-  setState(nextState) {
-    this.state = { ...this.state, ...nextState };
-    this.saveTodos(this.state.todos);
+  async setState(nextState) {
+    this.loadingOn();
+    this.state = { 
+      ...this.state, 
+      ...nextState,
+      todos: await this.fetchTodos()
+    };
+    this.loadingOff();
     this.todoList.setState({
       ...this.state,
       todos: this.filteredTodos(this.state.todos)
@@ -38,35 +51,44 @@ class App {
     }); 
   }
 
-  addTodo = (title) => {
-    const newTodo = { id: +Date.now(), title, completed: false };
-    this.setState({ todos: this.state.todos.concat(newTodo) });
+  addTodo = async (title) => {
+    this.loadingOn();
+    await todoAPI.addTodo(title);
+    this.loadingOff();
+    this.setState();
   }
 
-  editTodo = (id, title) => {
-    this.setState({
-      todos: this.state.todos.map(todo => todo.id !== id ? todo : { ...todo, title })
-    });
+  editTodo = async (id, title) => {
+    const todo = this.state.todos.find(todo => todo.id === id);
+    this.loadingOn();
+    await todoAPI.modifyTodo(id, { ...todo, title });
+    this.loadingOff();
+    this.setState();
   }
 
-  removeTodo = (id) => {
-    this.setState({
-      todos: this.state.todos.filter(todo => todo.id !== id)
-    });
+  removeTodo = async (id) => {
+    this.loadingOn();
+    await todoAPI.removeTodo(id);
+    this.loadingOff();
+    this.setState();
   }
 
-  toggleTodo = (id) => {
-    this.setState({
-      todos: this.state.todos.map(todo => todo.id !== id ? todo : { ...todo, completed: !todo.completed })
-    });
+  toggleTodo = async (id) => {
+    const todo = this.state.todos.find(todo => todo.id === id);
+    this.loadingOn();
+    await todoAPI.modifyTodo(id, { ...todo, completed: !todo.completed });
+    this.loadingOff();
+    this.setState();
   }
 
-  toggleAllTodos = () => {
-    this.setState({
-      todos: this.state.todos.every(({ completed }) => completed) ?
-      this.state.todos.map(todo => ({ ...todo,  completed: false })) :
-      this.state.todos.map(todo => ({ ...todo,  completed: true }))
-    });
+  toggleAllTodos = async () => {
+    this.loadingOn();
+    if (this.state.todos.every(({ completed }) => completed))
+      await todoAPI.modifyTodos({ completed: false })
+    else
+      await todoAPI.modifyTodos({ completed: true })  
+    this.loadingOff();
+    this.setState();
   }
 
   changeFilter = (filter) => {
@@ -88,14 +110,22 @@ class App {
   }
 
   fetchTodos() {
-    return JSON.parse(localStorage.getItem('todos')) ?? [];
+    return todoAPI.fetchTodos();
   }
 
   saveTodos(todos) {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
+
+  loadingOn() {
+    this.loadingSpinner.setState({ isLoading: true });
+  }
+
+  loadingOff() {
+    this.loadingSpinner.setState({ isLoading: false });
+  }
 }
 
 window.onload = () => {
   new App();
-}
+};
