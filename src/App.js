@@ -15,7 +15,7 @@ class App {
 
         this.todoinput = new TodoInput($("input.new-todo"), this.addTodo);
         this.todoList = new TodoList($("ul.todo-list"));
-        this.todoCounter = new TodoCounter($("footer.footer"), this.filterTodos);
+        this.todoCounter = new TodoCounter($("footer.footer"), this.changeFilter);
         this.loadingSpinner = new LoadingSpinner($("div#overlay"));
     }
 
@@ -30,11 +30,17 @@ class App {
 
     removeTodo = () => {};
 
-    filterTodos = () => {};
+    changeFilter = (filter) => {
+        this.setState({ filter })
+    };
 
     setState(nextState) {
         this.state = { ...this.state, ...nextState };
         this.todoList.setState({ ...this.state });
+        this.todoCounter.setState({
+            count: this.state.todos.length,
+            filter: this.state.filter,
+        })
     }
 }
 

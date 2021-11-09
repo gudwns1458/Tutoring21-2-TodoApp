@@ -1,6 +1,21 @@
+import {ALL, ACTIVE, COMPLETED} from "../constants/todo.js"
+
 export default class TodoCounter {
-    constructor($target) {
+    constructor($target, changeFilter) {
+        this.state ={
+            count: 0,
+            filter: ALL,
+        };
         this.$target = $target;
+        this.$target.addEventListener('click', ({ target }) => {
+            const filterEl = target.closest("[data-filter]");
+            if (filterEl) {
+                const { filter } = filterEl.dataset;               
+                changeFilter(filter);
+            }
+        });
+
+
         this.render();
 
     }
@@ -12,16 +27,22 @@ export default class TodoCounter {
 
     render() {
         this.$target.innerHTML = `
-            <span class="todo-count">2 개</span>
+            <span class="todo-count">${this.state.count} 개</span>
             <ul class="filters">
-                <li>
-                    <a href="#/" class="selected">모두</a>
+                <li data-filter="ALL">
+                    <a href="#/" ${
+                        this.state.filter === ALL ? 'class="selected"' : ""
+                }>모두</a>
                 </li>
-                <li>
-                    <a href="#/active">진행중</a>
+                <li data-filter="ACTIVE">
+                    <a href="#/active" ${
+                        this.state.filter === ACTIVE ? 'class="selected"' : ""
+                    }>진행중</a>
                 </li>
-                <li>
-                    <a href="#/completed">완료</a>
+                <li data-filter="COMPLETED">
+                    <a href="#/completed" ${
+                        this.state.filter === COMPLETED ? 'class="selected"' : ""
+                    }>완료</a>
                 </li>
             </ul>
         `;

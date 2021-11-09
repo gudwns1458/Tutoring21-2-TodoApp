@@ -9,7 +9,6 @@ export default class TodoList {
     }
 
     setState(nextState) {
-        console.log(nextState);
         this.state = { ...this.state, ...nextState };
         this.render();
     }
